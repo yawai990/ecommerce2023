@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useRef,useState,useEffect } from 'react';
 import { Carousel } from '../components';
 import { TfiReload } from 'react-icons/tfi';
 import { AiFillCaretDown } from 'react-icons/ai';
-import { getBestSeller } from '../redux/features/Bestseller';
-import { getAllProducts } from '../redux/features/Product';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { Card, Loading,ErrorMessage } from '../components';
 import { add_product, remove_product } from '../redux/features/CartItems';
+import useFlyImg from '../components/hooks/FlyImg';
 
 const FilterHeader = ({ title,icon, onFun}) =>{
   return <div className='flex items-center border border-collapse'>
@@ -17,11 +17,13 @@ const FilterHeader = ({ title,icon, onFun}) =>{
           </div>
 }
 
-const Home = () => {
+const Home = ({ cartRef }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const Flyimg = useFlyImg(cartRef);
   const { cartProducts } = useSelector(state => state.cartItems);
   const { isLoading, isSuccess, products, errmessage } = useSelector(state => state.products);
-
+  console.log(cartProducts)
   const addHandler = (product) =>{
     const insideCart = cartProducts.filter(cp => cp.products._id === product.products._id);
 
@@ -32,11 +34,14 @@ const Home = () => {
     }
   };
 
-console.log(cartProducts)
-  useEffect(() =>{
-    dispatch(getBestSeller())
-    dispatch(getAllProducts())
-  }, []);
+  const handleClick = (e) =>{
+    const targetParent =e.target.parentNode;
+    const img = targetParent.querySelector('img');
+    const clone = img.cloneNode();
+    targetParent.appendChild(clone);
+    Flyimg(clone, () => console.log(e));
+  };
+
   return (
     <>
           <div className='h-[18vh] bg-primary flex justify-center items-center'>
@@ -70,7 +75,7 @@ console.log(cartProducts)
             {
               isLoading ? <Loading />:
               !isSuccess && !isLoading ? <ErrorMessage message={errmessage} />:
-              products.map(pro =><Card addCart={addHandler} key={pro._id} products={pro} />)
+              products.map(pro =><Card navigate={navigate} clickFun={handleClick} addCart={addHandler} key={pro._id} products={pro} />)
             }
           </div>
         </main>

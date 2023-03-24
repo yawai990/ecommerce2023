@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { BsCart4 } from 'react-icons/bs';
+import Button from './Button';
 import { AiOutlineHeart, AiOutlinePlus,AiOutlineMinus } from 'react-icons/ai';
 import ReactStars from 'react-stars'
 
-const Card = ({ addCart, addWishList, products }) => {
+const Card = ({ ref, navigate, clickFun, addCart, addWishList, products }) => {
     const [ qty, setQty ] = useState(1);
 
     const minus = () => {
@@ -21,15 +22,16 @@ const Card = ({ addCart, addWishList, products }) => {
         }
     };
 
+    const GoDetail = (e) =>navigate(`/productdetails/${e}`);
   return (
-    <div className='max-w-[240px] rounded-lg bg-white drop-shadow overflow-hidden relative'>
+    <div ref={ref} className='max-w-[240px] rounded-lg bg-white drop-shadow overflow-hidden relative'>
 
         <div className='w-[21%] h-[40px] bg-red-500 absolute flex justify-center items-center rounded-b-lg text-white'>
             35%
         </div>
 
-        <div>
-            <img src={`https://res.cloudinary.com/dtcws1ecu/image/upload/v1676337693/${products.image[0].path}`} alt="" className='w-full h-[180px] object-cover' />
+        <div onClick={() =>GoDetail(products._id)}>
+            <img src={`https://res.cloudinary.com/dtcws1ecu/image/upload/v1676337693/${products.image[0].path}`} alt="" className='w-full h-[180px] object-cover cursor-pointer' />
         </div>
 
         <div className='w-[90%] mx-auto'>
@@ -63,8 +65,8 @@ const Card = ({ addCart, addWishList, products }) => {
    
 
     <div className='flex'>
-        <Button text={'add to cart'} icon={<BsCart4 />} color='green' fun={() =>addCart({ products, qty : qty})} />
-        <Button text={'wishlist'} icon={<AiOutlineHeart />} color='blue' fun={addWishList} />
+        <Button text={'add to cart'} icon={<BsCart4 />} color='#379237' fun={() =>addCart({ products, qty : qty})} />
+        <Button text={'wishlist'} icon={<AiOutlineHeart />} color={'#2F58CD'} fun={addWishList} />
 
     </div>
   
@@ -72,7 +74,5 @@ const Card = ({ addCart, addWishList, products }) => {
     </div>
   )
 };
-
-const Button = ({ icon, text, color, fun }) => <button onClick={fun} className={`w-1/2 flex gap-2 items-center bg-${color}-600 justify-center text-white text-sm capitalize p-1 py-2`}>{text} {icon}</button>;
 
 export default Card
